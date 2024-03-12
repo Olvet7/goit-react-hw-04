@@ -1,39 +1,54 @@
 import { Formik, Form, Field } from "formik";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import { TbPhotoSearch } from "react-icons/tb";
+import * as Yup from "yup";
 
-const notify = () => toast.error("Enter your search param, please");
+import css from "./SearchBar.module.css"
 
-function SearchBar({ onSubmit }) {
-  const initialValues = {
-    search: "",
-  };
+export default function SearchBar({ onSubmit }) {
 
-  const handleSubmit = (values) => {
-    if (!values.search) {
+  const notify = () => toast.error("Enter your search param, please");
+
+  const initialValues = {search: ""};
+
+  const validationSchema = Yup.object().shape({
+    search: Yup.string().min(2, "Too short query!").required(notify),
+  })
+
+  const handleSubmit = (values, actions) => {
+    actions.resetForm();
+
+    if (values.search.trim() === "") {
       notify();
       return;
     }
 
     console.log(values);
-    onSubmit(values.search);
+    console.log("WOW");
+    onSubmit(values.search.toLowerCase());
   };
 
   return (
     <header>
-      <Formik onSubmit={handleSubmit} initialValues={initialValues}>
-        <Form>
+      <Toaster position="top-right" />
+      <Formik 
+      onSubmit={handleSubmit} 
+      initialValues={initialValues}  
+      validationSchema={validationSchema}> 
+        <Form className={css.form}>
           <Field
             type="text"
             name="search"
             autoComplete="off"
-            autoFocus
             placeholder="Search images and photos"
+            className={css.input}
           />
-          <button type="submit">Search</button>
+          <button type="submit" className={css.btn}><TbPhotoSearch /></button>
         </Form>
       </Formik>
     </header>
   );
 }
 
-export default SearchBar;
+// import { TbPhotoSearch } from "react-icons/tb";
+{/* <TbPhotoSearch /> */}
