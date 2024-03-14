@@ -1,14 +1,20 @@
 import css from "../../components/ImageGallery/ImageGallery.module.css"
 import ImageCard from "./ImageCard/ImageCard";
 
-export default function ImageGallery ({ results, openModal }) {
+export default function ImageGallery ({ results, onClick, onTarget }) {
   return (
     <ul className={css.list}>
-      {results.map((result) => (
-        <li key={result.id}>
-        <ImageCard result={result} onClick={() => openModal(result)}/>
-        </li>
-      ))}
+      {results.map(({id, alt_description, urls}, index) => {
+        return (
+        <li key={`${id}-${index}`}>
+        <ImageCard 
+        url={urls} 
+        alt_description={alt_description} 
+        openModal={onClick} 
+        onTarget={onTarget}/>
+        </li>)
+        })
+      }
     </ul>
   );
 }

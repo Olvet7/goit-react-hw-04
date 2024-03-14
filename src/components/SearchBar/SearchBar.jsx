@@ -9,23 +9,21 @@ export default function SearchBar({ onSubmit }) {
 
   const notify = () => toast.error("Enter your search param, please");
 
-  const initialValues = {search: ""};
+  const initialValues = {query: ""};
 
   const validationSchema = Yup.object().shape({
-    search: Yup.string().min(2, "Too short query!").required(notify),
+    query: Yup.string().min(1, "Too short query!").required(notify),
   })
 
   const handleSubmit = (values, actions) => {
     actions.resetForm();
 
-    if (values.search.trim() === "") {
+    if (values.query.trim() === "") {
       notify();
       return;
-    }
+    } 
 
-    console.log(values);
-    console.log("WOW");
-    onSubmit(values.search.toLowerCase());
+    onSubmit(values.query.toLowerCase());
   };
 
   return (
@@ -38,7 +36,7 @@ export default function SearchBar({ onSubmit }) {
         <Form className={css.form}>
           <Field
             type="text"
-            name="search"
+            name="query"
             autoComplete="off"
             placeholder="Search images and photos"
             className={css.input}
@@ -49,6 +47,3 @@ export default function SearchBar({ onSubmit }) {
     </header>
   );
 }
-
-// import { TbPhotoSearch } from "react-icons/tb";
-{/* <TbPhotoSearch /> */}

@@ -1,16 +1,18 @@
 import "./App.css";
 import { useState, useEffect } from "react";
+import { ErrorMessage } from "formik";
 import SearchBar from "./components/SearchBar/SearchBar";
 import searchPhotos from "./search-api";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
-import { ErrorMessage } from "formik";
 import Loader from "./components/Loader/Loader";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
 import Modal from "react-modal";
+import ImageModal from "./components/ImageModal/ImageModal";
 
 // Modal settings
 const customStyles = {
   content: {
+    backgroundColor: 'white',
     top: '50%',
     left: '50%',
     right: 'auto',
@@ -31,7 +33,11 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [showBtn, setShowBtn] = useState(false);
-  // const [showModal, setShowModal] = useState(false);
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [modalData, setModalData] = useState({
+    img: "",
+    alt_description: "",
+  })
 
   useEffect(() => {
     if (query === "") {
@@ -74,15 +80,34 @@ export default function App() {
     setPage(page + 1);
   };
 
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
   return (
     <>
       <SearchBar onSubmit={handleSearch} />
-      {searchResults.length > 0 && <ImageGallery results={searchResults} />}
+      {searchResults.length > 0 && 
+      <ImageGallery 
+        results={searchResults} 
+        onClick={openModal} 
+        onTarget={setModalData}/>}
       {isLoading && <Loader />}
       {error && <ErrorMessage />}
       {!isLoading && showBtn && <LoadMoreBtn onLoadMore={handleLoadMore} />}
-      <Modal style={customStyles}>
-        {/* <ImageOpen /> */}
+     
+
+      <Modal
+      isOpen={modalIsOpen}
+      onRequestClose={closeModal}
+      style={customStyles}>
+        {/* Modal Component */}
+        <ImageModal onModalClose={closeModal} img={modalData}/>
       </Modal>
     </>
   );
@@ -92,35 +117,3 @@ export default function App() {
 // https://olvet7.github.io/goit-react-hw-03-image-finder/ - готовий пошуковий сервіс
 // https://github.com/Olvet7/goit-react-hw-03-image-finder - код
 
-// План:
-// інпут
-// api запит
-// колекція
-// LoadMore + пагінація
-// LocalStorage
-// useState, useEffect, useMemo, useRef
-// state mashine
-// модалка
-// умова рендеру
-
-
-// Про Локал Сторедж
-// if (localStorage.getItem("query") === query) {
-//   // якщо параметр запиту співпадає, то читаємо його із LocalStorage
-//   const storedResults = JSON.parse(
-//     localStorage.getItem("searchResults")
-//   );
-//   if (storedResults) {
-//     setSearchResults(storedResults);
-//     setShowBtn(false);
-//     const updatedResults = [...storedResults, ...results];
-//     localStorage.setItem('searchResults', JSON.stringify(updatedResults));
-//     setSearchResults(updatedResults)
-//   } 
-// } else {
-//   localStorage.setItem('searchResults', JSON.stringify(results));
-//   setSearchResults(results)
-//   localStorage.setItem("query", query);
-//   localStorage.setItem("searchResults", JSON.stringify(results));
-//   setSearchResults(results);
-// }
