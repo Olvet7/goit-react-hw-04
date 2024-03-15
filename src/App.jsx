@@ -1,29 +1,12 @@
 import "./App.css";
 import { useState, useEffect } from "react";
-import { ErrorMessage } from "formik";
+import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import SearchBar from "./components/SearchBar/SearchBar";
 import searchPhotos from "./search-api";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import Loader from "./components/Loader/Loader";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
-import Modal from "react-modal";
 import ImageModal from "./components/ImageModal/ImageModal";
-
-// Modal settings
-const customStyles = {
-  content: {
-    backgroundColor: 'white',
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-  },
-};
-
-// Modal Window in #root
-Modal.setAppElement("#root");
 
 
 export default function App() {
@@ -73,13 +56,12 @@ export default function App() {
     if (newSearch === query) return;
     setQuery(newSearch);
     setSearchResults([]);
-    setPage(1);
+    setPage(1);     
   };
 
   const handleLoadMore = () => {
     setPage(page + 1);
   };
-
 
   function openModal() {
     setIsOpen(true);
@@ -101,14 +83,11 @@ export default function App() {
       {error && <ErrorMessage />}
       {!isLoading && showBtn && <LoadMoreBtn onLoadMore={handleLoadMore} />}
      
-
-      <Modal
-      isOpen={modalIsOpen}
-      onRequestClose={closeModal}
-      style={customStyles}>
-        {/* Modal Component */}
-        <ImageModal onModalClose={closeModal} img={modalData}/>
-      </Modal>
+      <ImageModal 
+      modalIsOpen={modalIsOpen} 
+      closeModal={closeModal}
+      modalData={modalData}
+      />
     </>
   );
 }
