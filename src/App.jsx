@@ -24,7 +24,7 @@ export default function App() {
 
   useEffect(() => {
     if (query === "") {
-      <p>Enter your query</p>;
+      setError("Enter your query")
       return;
     }
 
